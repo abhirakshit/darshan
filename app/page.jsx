@@ -6,6 +6,8 @@ import { Suspense } from 'react'
 const Logo = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Logo), { ssr: false })
 const Dog = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Dog), { ssr: false })
 const Duck = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Duck), { ssr: false })
+const Chart = dynamic(() => import('@/components/canvas/Chart').then((mod) => mod.Chart), { ssr: false })
+
 const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.View), {
   ssr: false,
   loading: () => (
@@ -37,8 +39,9 @@ export default function Page() {
         <div className='w-full text-center md:w-3/5'>
           <View className='flex h-96 w-full flex-col items-center justify-center'>
             <Suspense fallback={null}>
-              <Logo route='/blob' scale={0.6} position={[0, 0, 0]} />
-              <Common />
+              {/*<Logo route='/blob' scale={0.6} position={[0, 0, 0]} />*/}
+              <Chart/>
+              <Common color={'lightpink'}/>
             </Suspense>
           </View>
         </div>
