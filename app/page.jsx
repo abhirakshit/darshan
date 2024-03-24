@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
+import {DateTimeInput} from "@/components/dom/DateTimeInput";
 
 const Logo = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Logo), { ssr: false })
 const Dog = dynamic(() => import('@/components/canvas/Examples').then((mod) => mod.Dog), { ssr: false })
@@ -22,18 +23,57 @@ const View = dynamic(() => import('@/components/canvas/View').then((mod) => mod.
   ),
 })
 const Common = dynamic(() => import('@/components/canvas/View').then((mod) => mod.Common), { ssr: false })
+const Chart = dynamic(() => import('@/components/canvas/Chart').then((mod) => mod.Chart), {ssr: false})
 
 export default function Page() {
   return (
     <>
+      <div className="w-full h-screen grid grid-cols-12 items-start p-12">
+        <div className="col-span-6"> {/* Red for visibility */}
+            <View className='flex h-96 w-full flex-col items-center justify-center'>
+              <Suspense fallback={null}>
+                <Chart scale={0.6} position={[0, 0, 0]} />
+                <Common color={'lightblue'}/>
+              </Suspense>
+            </View>
+        </div>
+        <div className="col-span-2 pl-4 pr-4" >
+          <p className='w-full uppercase'>Charts</p>
+        </div>
+        <div className="col-span-4">
+          <h1 className='my-4 text-5xl font-bold leading-tight'>Darshan</h1>
+          <DateTimeInput/>
+          <p className='mb-8 text-2xl leading-normal'>A minimalist starter for React, React-three-fiber and Threejs.</p>
+        </div>
+      </div>
+      <div className='mx-auto flex w-full flex-col flex-wrap items-center md:flex-row lg:w-4/5'>
+        {/* jumbo */}
+        <div className='flex w-full flex-col items-start justify-center p-12 text-center md:w-3/5 md:text-left'>
+          <View className='flex h-96 w-full flex-col items-center justify-center'>
+            <Suspense fallback={null}>
+              <Chart scale={0.6} position={[0, 0, 0]} />
+              <Common color={'lightblue'}/>
+            </Suspense>
+          </View>
+
+        </div>
+        <div className='w-full top-0 md:w-1/5'>
+          <p className='w-full uppercase'>Charts</p>
+        </div>
+        <div className='w-full text-center md:w-1/5'>
+          {/*<p className='w-full uppercase'>Darshan</p>*/}
+          <h1 className='my-4 text-5xl font-bold leading-tight'>Darshan</h1>
+          <p className='mb-8 text-2xl leading-normal'>A minimalist starter for React, React-three-fiber and Threejs.</p>
+        </div>
+      </div>
+
       <div className='mx-auto flex w-full flex-col flex-wrap items-center md:flex-row  lg:w-4/5'>
         {/* jumbo */}
         <div className='flex w-full flex-col items-start justify-center p-12 text-center md:w-2/5 md:text-left'>
-          <p className='w-full uppercase'>Next + React Three Fiber</p>
+          <p className='w-full uppercase'>Darshan</p>
           <h1 className='my-4 text-5xl font-bold leading-tight'>Next 3D Starter</h1>
           <p className='mb-8 text-2xl leading-normal'>A minimalist starter for React, React-three-fiber and Threejs.</p>
         </div>
-
         <div className='w-full text-center md:w-3/5'>
           <View className='flex h-96 w-full flex-col items-center justify-center'>
             <Suspense fallback={null}>
@@ -58,6 +98,7 @@ export default function Page() {
             </Suspense>
           </View>
         </div>
+
         {/* second row */}
         <div className='relative my-12 h-48 w-full py-6 sm:w-1/2 md:mb-40'>
           <View orbit className='relative h-full animate-bounce sm:h-48 sm:w-full'>

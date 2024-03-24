@@ -2,7 +2,9 @@
 
 import { useRef } from 'react'
 import dynamic from 'next/dynamic'
+import {Nav} from "@/components/dom/Nav";
 const Scene = dynamic(() => import('@/components/canvas/Scene'), { ssr: false })
+// const Nav = dynamic(() => import('@/components/dom/Nav'), { ssr: false })
 
 const Layout = ({ children }) => {
   const ref = useRef()
@@ -18,6 +20,8 @@ const Layout = ({ children }) => {
         touchAction: 'auto',
       }}
     >
+      <Nav />
+
       {children}
       <Scene
         style={{
