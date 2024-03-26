@@ -31,10 +31,10 @@ export default function Page() {
     <>
       <div className="w-full h-screen grid grid-cols-12 items-start p-12">
         <div className="col-span-6"> {/* Red for visibility */}
-            <View className='flex h-96 w-full flex-col items-center justify-center'>
+            <View className='flex h-screen w-full flex-col items-center justify-center'>
               <Suspense fallback={null}>
                 <Chart scale={0.6} position={[0, 0, 0]} />
-                <Common color={'lightblue'}/>
+                <Common color={'white'}/>
               </Suspense>
             </View>
         </div>
