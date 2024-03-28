@@ -4,7 +4,7 @@ import {Plane, Text, useGLTF} from "@react-three/drei";
 import {useFrame} from "@react-three/fiber";
 import {useRef} from "react";
 import * as THREE from "three"
-import {find} from "lodash"
+import {find, forEach} from "lodash"
 
 
 const defaultHouseColor = `#eed677`
@@ -23,17 +23,110 @@ const HOUSE_NAMES_NUM_MAPPING = [
   {num: 12, name: "Pi", imageName: ''},
 ]
 const sampleD1 = [
-  {"name": "Asc", "nameShort": "As", "placement": "Scorpio", "placementShort": "Sc", "degree": 22, "minute": 25, "second": 33},
-  {"name": "Sun", "nameShort": "Su", "placement": "Aquarius", "placementShort": "Aq", "degree": 8, "minute": 28, "second": 31},
-  {"name": "Moon", "nameShort": "Mo", "placement": "Libra", "placementShort": "Li", "degree": 14, "minute": 32, "second": 32},
-  {"name": "Mars", "nameShort": "Ma", "placement": "Aquarius", "placementShort": "Aq", "degree": 6, "minute": 36, "second": 17},
-  {"name": "Mercury", "nameShort": "Me", "placement": "Taurus", "placementShort": "Ta", "degree": 8, "minute": 36, "second": 4},
-  {"name": "Jupiter", "nameShort": "Ju", "placement": "Virgo", "placementShort": "Vi", "degree": 4, "minute": 29, "second": 45},
-  {"name": "Venus", "nameShort": "Ve", "placement": "Cancer", "placementShort": "Ca", "degree": 7, "minute": 5, "second": 56},
-  {"name": "Saturn", "nameShort": "Sa", "placement": "Libra", "placementShort": "Li", "degree": 19, "minute": 53, "second": 49},
-  {"name": "Rahu", "nameShort": "Ra", "placement": "Cancer", "placementShort": "Ca", "degree": 7, "minute": 48, "second": 12},
-  {"name": "Ketu", "nameShort": "Ke", "placement": "Taurus", "placementShort": "Ta", "degree": 0, "minute": 0, "second": 47}
+  {
+    "name": "Asc",
+    "nameShort": "As",
+    "placement": "Scorpio",
+    "placementShort": "Sc",
+    "degree": 22,
+    "minute": 25,
+    "second": 33
+  },
+  {
+    "name": "Sun",
+    "nameShort": "Su",
+    "placement": "Aquarius",
+    "placementShort": "Aq",
+    "degree": 8,
+    "minute": 28,
+    "second": 31
+  },
+  {
+    "name": "Moon",
+    "nameShort": "Mo",
+    "placement": "Libra",
+    "placementShort": "Li",
+    "degree": 14,
+    "minute": 32,
+    "second": 32
+  },
+  {
+    "name": "Mars",
+    "nameShort": "Ma",
+    "placement": "Aquarius",
+    "placementShort": "Aq",
+    "degree": 6,
+    "minute": 36,
+    "second": 17
+  },
+  {
+    "name": "Mercury",
+    "nameShort": "Me",
+    "placement": "Taurus",
+    "placementShort": "Ta",
+    "degree": 8,
+    "minute": 36,
+    "second": 4
+  },
+  {
+    "name": "Jupiter",
+    "nameShort": "Ju",
+    "placement": "Virgo",
+    "placementShort": "Vi",
+    "degree": 4,
+    "minute": 29,
+    "second": 45
+  },
+  {
+    "name": "Venus",
+    "nameShort": "Ve",
+    "placement": "Cancer",
+    "placementShort": "Ca",
+    "degree": 7,
+    "minute": 5,
+    "second": 56
+  },
+  {
+    "name": "Saturn",
+    "nameShort": "Sa",
+    "placement": "Libra",
+    "placementShort": "Li",
+    "degree": 19,
+    "minute": 53,
+    "second": 49
+  },
+  {
+    "name": "Rahu",
+    "nameShort": "Ra",
+    "placement": "Cancer",
+    "placementShort": "Ca",
+    "degree": 7,
+    "minute": 48,
+    "second": 12
+  },
+  {
+    "name": "Ketu",
+    "nameShort": "Ke",
+    "placement": "Taurus",
+    "placementShort": "Ta",
+    "degree": 0,
+    "minute": 0,
+    "second": 47
+  }
 ]
+
+function degreesToLERP(degrees, minutes, seconds) {
+  // Convert everything to total degrees first
+  const totalDegrees = degrees + minutes / 60 + seconds / 3600;
+  const minOffset = .15
+
+  // Now convert to a 0-1 range
+  // The max value is 29 degrees, 59 minutes, and 59 seconds, so we normalize based on this maximum.
+  // This converts the range 0-29.999444... degrees to 0-1.
+  const maxDegrees = 29 + 59 / 60 + 59 / 3600;
+  const val = totalDegrees / maxDegrees
+  return val < minOffset ? minOffset : val;
+}
 
 const getHouseName = (num) => {
   return find(HOUSE_NAMES_NUM_MAPPING, {num}).name
@@ -111,7 +204,6 @@ function House(props) {
       houseRef.current.material.color.setHex(0xff0000)
     }
   }
-
   const houseDeselect = (index) => {
     // console.log('deselct', index)
     if (houseRef.current) {
@@ -135,9 +227,42 @@ function House(props) {
 
 const PlanetPlacement = ({radius, ascendantNumber, chartInfo}) => {
 
+  const planetSelected = ({name, nameShort}) => {
+    console.log(name)
+  }
 
+  const planetDeselected = ({name, nameShort}) => {
+    // console.log(name)
+  }
   return (
     <>
+      {
+        chartInfo.map((planetInfo) => {
+          console.log(planetInfo.name, planetInfo.placementShort)
+          const offset = ascendantNumber * (Math.PI / 6);
+          // Adjust the angle for each number based on the top number
+          const angle = Math.PI / 2 + getHouseNum(planetInfo.placementShort) * (Math.PI / 6) - offset;
+          const distFromCenter = radius * degreesToLERP(planetInfo.degree, planetInfo.minute, planetInfo.second)
+          const position = [Math.cos(angle) * distFromCenter, Math.sin(angle) * distFromCenter, 0];
+          // console.log(position)
+          const planetRef = useRef()
+          return <Text ref={planetRef}
+                       onClick={(e) => {
+                         e.stopPropagation()
+                         planetSelected(planetInfo)}}
+                       onPointerMissed={(e) => planetDeselected(planetInfo)}
+                       key={planetInfo.nameShort}
+                       position={position}
+                       fontSize={0.1}
+                       color="#000"
+                       anchorX="center"
+                       anchorY="middle"
+                       wireframe={true}
+          >
+            {planetInfo.nameShort}
+          </Text>
+        })
+      }
     </>
   )
 }
